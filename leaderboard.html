@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Click War</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #6317ad, #291d65 90%);
+      color: #f6dfff;
+      min-height: 100vh;
+    }
+    main {
+      max-width: 580px;
+      margin: 36px auto;
+      padding: 28px 16px;
+      background: rgba(33, 12, 62, 0.92);
+      border-radius: 2em;
+      box-shadow: 0 0 30px #31105680;
+    }
+    h1 {
+      margin: 0 0 10px 0;
+      font-size: 2.7em;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, #ffecb3, #fa36b8 80%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .desc {
+      color: #eedcff;
+      font-size: 1.12em;
+      margin-bottom: 1.8em;
+    }
+    .clock-note { color: #ffe066; font-weight: bold; }
+    .setup input {
+      padding: .8em 1em;
+      font-size: 1.16em;
+      border-radius: .7em;
+      border: none;
+      outline: none;
+      margin-right: .7em;
+    }
+    button {
+      padding: .8em 2em;
+      border-radius: .7em;
+      border: none;
+      color: #fff9fc;
+      background: linear-gradient(90deg, #c754fc, #fa36b8 80%);
+      font-size: 1.16em;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-top: .5em;
+      cursor: pointer;
+      box-shadow: 0 0 8px #6317ad60;
+      transition: transform .09s;
+    }
+    button:active { transform: scale(0.97); }
+    .game { margin-top: 2.5em; }
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1.2em;
+      gap: 1.5em;
+    }
+    .stat {
+      background: #7b1fa2cc;
+      color: #ffe8fc;
+      border-radius: 1em;
+      padding: 1.3em .7em .8em .7em;
+      min-width: 80px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.23em;
+      flex: 1;
+      box-shadow: 0 2px 12px #2a126a60;
+    }
+    .stat span { font-size: 2em; display: block; margin-bottom: .1em; color: #ffecb3 }
+    #click-btn {
+      display: block;
+      margin: 1.2em auto 0 auto;
+      width: 175px;
+      height: 175px;
+      border-radius: 100%;
+      background: radial-gradient(circle at 40% 45%, #ed3ab4 50%, #9d38e6 120%);
+      color: #fffcee;
+      font-size: 1.56em;
+      letter-spacing: 1.5px;
+      font-weight: bold;
+      border: 6px solid #fff4d540;
+      box-shadow: 0 7px 25px #791a8b50;
+      transition: background 0.2s, transform .09s;
+    }
+    #click-btn:active {
+      background: radial-gradient(circle at 60% 30%, #ed589f 60%, #e660eac9 120%);
+      border-color: #feb2ff;
+    }
+    .motivation {
+      color: #fff9c6;
+      font-size: 1.13em;
+      text-align: center;
+      margin: 1.3em 0 1.6em;
+      animation: fadeIn .7s;
+    }
+    .background-mode-toggle {
+      margin: 1em 0;
+      text-align: center;
+      color: #ffe066;
+      font-weight: bold;
+    }
+    .background-mode-toggle input[type="checkbox"] {
+      accent-color: #fa36b8;
+      transform: scale(1.2);
+      margin-right: .6em;
+      vertical-align: middle;
+    }
+    .background-mode-on {
+      color: #39e941;
+    }
+    .background-mode-off {
+      color: #e04f9a;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0}
+      to {opacity:1;}
+    }
+    .invite {
+      text-align: center;
+      margin-bottom: 1.3em;
+    }
+    .invite input {
+      width: 75%;
+      margin: .5em 0 .3em 0;
+      background: #fff3;
+      border: none;
+      color: #511d65;
+      border-radius: .5em;
+      padding: .55em;
+      font-weight: bold;
+      font-size: 1.04em;
+    }
+    .invite button {
+      margin: 0 0 .1em .5em;
+      padding: .45em 1em;
+    }
+    .copied-msg {
+      color: #33ed95;
+      font-size: 1em;
+      margin-left: 15px;
+      vertical-align: middle;
+    }
+    .leaderboard-box {
+      background: #fff2;
+      border-radius: 1em;
+      padding: 1em 1.2em;
+      margin-top: .7em;
+      box-shadow: 0 2px 17px #c9a7fd30;
+    }
+    .leaderboard-box h2 {
+      font-size: 1.42em;
+      color: #ffecb2;
+      margin: 0 0 .5em 0;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-align: center;
+    }
+    #leaderboard {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+    #leaderboard li {
+      display: flex;
+      justify-content: space-between;
+      padding: .5em 0;
+      border-bottom: 1px solid #fff2;
+      font-size: 1.09em;
+    }
+    #leaderboard li.rank-1 { background: #ffe06641; font-weight: bold; }
+    #leaderboard li.rank-2 { background: #feec5e30; font-weight: bold; }
+    #leaderboard li.rank-3 { background: #fde4e770; }
+    .reset-note {
+      font-size: .99em;
+      color: #ffe066;
+      margin: .45em 0 0 0;
+      text-align: right;
+      font-style: italic;
+    }
+    @media (max-width: 600px) {
+      main { padding: 8px 0; border-radius: 0;}
+      .stats { flex-direction: column; gap: .9em;}
+      .leaderboard-box { padding: .7em .3em;}
+      #click-btn { width: 112px; height: 112px;}
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>CLICK WAR</h1>
+    <p class="desc">
+      Welcome to the Click War — the only game you never stop playing. <br>
+      From the moment your computer wakes up, every single click you make counts.
+      Googling something? Click. Shooting in a game? Click. Accidentally clicking the wrong tab? Still a click.<br>
+      <span style="font-style: italic;">You’re always in the arena — whether you’re grinding XP or just browsing memes.</span><br>
+      <b>At midnight, the scoreboard is wiped clean. Yesterday’s champions fall. A new war begins.</b>
+      <br>
+      Invite your friends with a sharable link and watch as their clicks clash with yours in a live, global leaderboard!
+      <br>
+      Can you rule the daily click kingdom?<br><span class="clock-note">The war never sleeps — and neither should your finger.</span>
+    </p>
+    <div class="setup" id="setup-section">
+      <input id="player-name" type="text" maxlength="20" placeholder="Enter your war name..." autofocus>
+      <button id="start-btn">Enter The Arena</button>
+    </div>
+    <section class="game" id="game-section" style="display:none;">
+      <div class="background-mode-toggle" id="background-toggle-section">
+        <label>
+          <input type="checkbox" id="bg-mode-toggle" />
+          <span id="bg-mode-label" class="background-mode-off">Activate Background Mode (count ALL page clicks)</span>
+        </label>
+      </div>
+      <div class="stats">
+        <div class="stat"><span id="clicks">0</span><div>Your Clicks</div></div>
+        <div class="stat"><span id="timer">00:00:00</span><div>Time Left</div></div>
+        <div class="stat"><span id="rank">-</span><div>Your Rank</div></div>
+      </div>
+      <button id="click-btn">CLICK!</button>
+      <div class="motivation" id="motivation">Every click moves you up! Keep going!</div>
+      <div class="invite">
+        <label>Invite link:</label>
+        <input id="invite-link" readonly>
+        <button id="copy-link-btn">Copy</button>
+        <span class="copied-msg" id="copied-msg" style="display:none;">Copied!</span>
+      </div>
+      <div class="leaderboard-box">
+        <h2>Daily Click Kings</h2>
+        <ol id="leaderboard"></ol>
+        <div class="reset-note">(Leaderboard resets at midnight)</div>
+      </div>
+    </section>
+  </main>
+  <script>
+    // --- Helper for timer ---
+    function timeToMidnightString() {
+      const now = new Date();
+      const midnight = new Date();
+      midnight.setHours(24, 0, 0, 0);
+      const ms = midnight - now;
+      if (ms <= 0) return "00:00:00";
+      const h = String(Math.floor(ms / 3600000)).padStart(2, "0");
+      const m = String(Math.floor((ms % 3600000) / 60000)).padStart(2, "0");
+      const s = String(Math.floor((ms % 60000) / 1000)).padStart(2, "0");
+      return `${h}:${m}:${s}`;
+    }
+
+    // --- Dummy leaderboard and player functions ---
+    const getInitialLeaderboard = () => [
+      { name: "Popsi", clicks: 9648 },
+      { name: "GameHunter", clicks: 8500 },
+      { name: "Benji", clicks: 7880 },
+      { name: "FingerQueen", clicks: 7002 },
+      { name: "Zapper", clicks: 3995 },
+    ];
+
+    let playerName = "";
+    let playerClicks = 0;
+    let leaderboard = getInitialLeaderboard();
+    let backgroundModeActive = false;
+
+    function updateLeaderboard() {
+      // Place player in leaderboard if in top 5
+      const others = leaderboard.filter(p => p.name !== playerName);
+      const full = [...others, { name: playerName, clicks: playerClicks }].filter(p => p.name);
+      full.sort((a, b) => b.clicks - a.clicks);
+      // Only show top 5
+      const top5 = full.slice(0, 5);
+
+      // Update visible leaderboard
+      const list = document.getElementById("leaderboard");
+      list.innerHTML = "";
+      top5.forEach((p, i) => {
+        const li = document.createElement("li");
+        li.className = `rank-${i+1}`;
+        li.textContent = `${i+1}. ${p.name}` + (p.name === playerName ? " (You)" : "");
+        const score = document.createElement("span");
+        score.style.cssText = "font-variant-numeric: tabular-nums; text-align: right; margin-left: 14px";
+        score.textContent = p.clicks;
+        li.appendChild(score);
+        list.appendChild(li);
+      });
+      // Find player rank
+      let playerRank = full.findIndex(p => p.name === playerName) + 1;
+      document.getElementById("rank").textContent = playerRank && playerName ? `#${playerRank}` : "-";
+    }
+
+    // --- Timer, reset, and stats ---
+    function updateStats() {
+      document.getElementById("clicks").textContent = playerClicks;
+      document.getElementById("timer").textContent = timeToMidnightString();
+      updateLeaderboard();
+    }
+
+    let midnightInterval = setInterval(() => {
+      document.getElementById("timer").textContent = timeToMidnightString();
+      if (timeToMidnightString() === "00:00:00") {
+        setTimeout(() => {
+          alert("Midnight! All scores reset. A new day starts.");
+          playerClicks = 0;
+          leaderboard = getInitialLeaderboard();
+          updateStats();
+        }, 550);
+      }
+    }, 500);
+
+    // --- Invite link logic ---
+    function updateInviteLink() {
+      const link = `${window.location.origin}${window.location.pathname}?invite=${encodeURIComponent(playerName)}`;
+      document.getElementById("invite-link").value = link;
+    }
+
+    // --- Setup Logic ---
+    document.getElementById('start-btn').onclick = () => {
+      const val = document.getElementById("player-name").value.trim();
+      if (val) {
+        playerName = val;
+        document.getElementById("setup-section").style.display = "none";
+        document.getElementById("game-section").style.display = "";
+        updateInviteLink();
+        updateStats();
+        document.getElementById("motivation").textContent = `Every click moves you up! Keep going, ${playerName}!`;
+      }
+    };
+    document.getElementById("player-name").addEventListener("keydown", evt => {
+      if (evt.key === "Enter") document.getElementById("start-btn").click();
+    });
+
+    // --- Click button logic ---
+    document.getElementById("click-btn").onclick = () => {
+      playerClicks++;
+      updateStats();
+      const mot = document.getElementById("motivation");
+      mot.textContent =
+        ["Fast!", "Keep tapping!", "Climb the leaderboard!", "Ruling the kingdom?", "Don't let the clock win!", "Faster!!"][playerClicks % 6]
+        + ` ${playerName}!`;
+    };
+
+    // --- Copy Invite Link ---
+    document.getElementById("copy-link-btn").onclick = () => {
+      const link = document.getElementById("invite-link");
+      link.select();
+      document.execCommand("copy");
+      const cmsg = document.getElementById("copied-msg");
+      cmsg.style.display = "";
+      setTimeout(() => cmsg.style.display = "none", 900);
+    };
+
+    // --- Allow link to prefill player name ---
+    window.onload = () => {
+      const url = new URL(window.location.href);
+      const pname = url.searchParams.get('invite');
+      if (pname) {
+        document.getElementById("player-name").value = decodeURIComponent(pname);
+      }
+    };
+
+    // === BACKGROUND MODE ===
+
+    // Handler for global clicks
+    function onGlobalClick(event) {
+      // Don't allow clicks before game started, or if no player name
+      if (!playerName || document.getElementById("game-section").style.display === "none") return;
+      // Do not double count the click button or input fields
+      if (
+        event.target.id === 'click-btn' ||
+        event.target.closest && event.target.closest('.invite') ||
+        event.target.id === "player-name"
+      ) return;
+
+      playerClicks++;
+      updateStats();
+
+      const mot = document.getElementById("motivation");
+      // Feedback for background click
+      mot.textContent = `📢 Background click detected! Keep going, ${playerName}!`;
+    }
+
+    // Toggle background mode
+    const bgModeToggle = document.getElementById('bg-mode-toggle');
+    const bgModeLabel = document.getElementById('bg-mode-label');
+    bgModeToggle.addEventListener('change', function() {
+      backgroundModeActive = this.checked;
+      if (backgroundModeActive) {
+        document.addEventListener('click', onGlobalClick);
+        bgModeLabel.textContent = "Background Mode ON (all page clicks count!)";
+        bgModeLabel.classList.add("background-mode-on");
+        bgModeLabel.classList.remove("background-mode-off");
+      } else {
+        document.removeEventListener('click', onGlobalClick);
+        bgModeLabel.textContent = "Activate Background Mode (count ALL page clicks)";
+        bgModeLabel.classList.add("background-mode-off");
+        bgModeLabel.classList.remove("background-mode-on");
+        // Reset motivation
+        if (playerName) {
+          document.getElementById("motivation").textContent = `Every click moves you up! Keep going, ${playerName}!`;
+        }
+      }
+    });
+
+  </script>
+</body>
+</html>
